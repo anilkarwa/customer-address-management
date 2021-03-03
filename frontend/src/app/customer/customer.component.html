@@ -1,0 +1,196 @@
+<!-- As a heading -->
+<nav class="navbar navbar-light navBar">
+  <span class="navbar-brand mb-0 h1">Welcome</span>
+  <span><button class="customBtn navBtns" (click)="openVerticallyCentered(addCustomer)">Add Customer</button></span>
+</nav>
+
+<div class="section">
+  <div class="container">
+    <div>
+      <input type="text" class="searchInput" name="searchValue" [(ngModel)]="searchValue" #search="ngModel"
+        (keyup)="searchCustomer()" placeholder="Search..." />
+      <i class="fa fa-search searchIcon" aria-hidden="true"></i>
+    </div>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>First</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let customer of customerListData">
+          <td>{{customer.firstName}}</td>
+          <td>{{customer.lastName}}</td>
+          <td>{{customer.emailAddress}}</td>
+          <td>{{customer.phoneNumber}}</td>
+          <td>
+            <button class="customBtn" type="button"
+              (click)="openVerticallyCentered(addAddress);selectedCustomerId = customer._id;">Add Address</button>
+            <button class="customBtn" type="button"
+              (click)="openVerticallyCentered(addCustomer);editCustomer(customer);">Edit</button>
+            <button class="customBtn" type="button"
+              (click)="openVerticallyCentered(deleteCustomer);selectedCustomerId = customer._id;">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItem" [(page)]="page" [maxSize]="5"
+      [rotate]="true" [ellipses]="false" [boundaryLinks]="true" (pageChange)="paginationChange()"></ngb-pagination>
+  </div>
+</div>
+
+<!-- Add Edit Modal -->
+<ng-template #addCustomer let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{modelTitle}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #newCustomerForm="ngForm" (ngSubmit)="onNewCustomerSave(newCustomerForm)">
+      <label>First Name</label>
+      <input type="text" placeholder="Enter first name" required maxlength="255" [(ngModel)]="customer.firstName"
+        name="firstName" #fristName="ngModel">
+      <div class="error" *ngIf="!fristName.valid && fristName.touched">
+        First name is required!
+      </div>
+
+      <label>Last Name</label>
+      <input type="text" placeholder="Enter last name" required maxlength="255" [(ngModel)]="customer.lastName"
+        name="lastName" #lastName="ngModel">
+      <div class="error" *ngIf="!lastName.valid && lastName.touched">
+        Last name is required!
+      </div>
+
+      <label>Email</label>
+      <input type="email" placeholder="Enter email address" required [(ngModel)]="customer.emailAddress"
+        name="emailAddress" #emailAddress="ngModel">
+      <div class="error" *ngIf="!emailAddress.valid && emailAddress.touched">
+        Email is required!
+      </div>
+
+      <label>Phone Number</label>
+      <input type="text" placeholder="Enter phone number" required [(ngModel)]="customer.phoneNumber" name="phoneNumber"
+        #phoneNumber="ngModel">
+      <div class="error" *ngIf="!phoneNumber.valid && phoneNumber.touched">
+        phoneNumber is required!
+      </div>
+
+      <div class="model-btns">
+        <button type="button" class="btn btn-light" (click)="newCustomerForm.reset()">
+          Reset
+        </button>
+
+        <button type="submit" class="btn btn-light" [disabled]="!newCustomerForm.form.valid">
+          Save
+        </button>
+      </div>
+
+
+    </form>
+  </div>
+</ng-template>
+
+
+<!-- Add Address -->
+<ng-template #addAddress let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{modelTitle}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #newAddressForm="ngForm" (ngSubmit)="onNewAddressSave(newAddressForm)">
+     
+      <label>Address Line 1</label>
+      <textarea placeholder="Enter address line 1" required maxlength="255" [(ngModel)]="address.addressLine1"
+      name="addressLine1" #addressLine1="ngModel">
+      </textarea> 
+      <div class="error" *ngIf="!addressLine1.valid && addressLine1.touched">
+        Address Line 1 is required!
+      </div>
+
+      <label>Address Line 2</label>
+      <textarea placeholder="Enter address line 2" required maxlength="255" [(ngModel)]="address.addressLine2"
+      name="addressLine2" #addressLine2="ngModel">
+      </textarea> 
+      <div class="error" *ngIf="!addressLine2.valid && addressLine2.touched">
+        Address Line 2 is required!
+      </div>
+
+      <label>City</label>
+      <input type="type" placeholder="Enter city name" required [(ngModel)]="address.city"
+        name="city" #city="ngModel">
+      <div class="error" *ngIf="!city.valid && city.touched">
+        City is required!
+      </div>
+
+      <label>State</label>
+      <input type="text" placeholder="Enter state name" required [(ngModel)]="address.state" name="state"
+        #state="ngModel">
+      <div class="error" *ngIf="!state.valid && state.touched">
+        State is required!
+      </div>
+
+      <label>Coutnry</label>
+      <input type="text" placeholder="Enter country name" required [(ngModel)]="address.country" name="country"
+        #country="ngModel">
+      <div class="error" *ngIf="!country.valid && country.touched">
+        Country is required!
+      </div>
+
+      <label>Zip Code</label>
+      <input type="text" placeholder="Enter zip code" required [(ngModel)]="address.zipCode" name="zipCode"
+        #zipCode="ngModel">
+      <div class="error" *ngIf="!zipCode.valid && zipCode.touched">
+        Zip Code is required!
+      </div>
+
+      <label>Is primary</label>
+      <select name="isPrimary" required [(ngModel)]="address.isPrimary" name="isPrimary" >
+        <option value=''></option>
+        <option value=true>True</option>
+        <option value=false>False</option>
+      </select>
+
+      <div class="model-btns">
+        <button type="button" class="btn btn-light" (click)="newAddressForm.reset()">
+          Reset
+        </button>
+
+        <button type="submit" class="btn btn-light" [disabled]="!newAddressForm.form.valid">
+          Save
+        </button>
+      </div>
+
+
+    </form>
+  </div>
+</ng-template>
+
+
+<!-- Rating Modal -->
+<ng-template #deleteCustomer let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Delete Customer</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete customer?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">No</button>
+    <button type="button" class="btn btn-light" (click)="deleteSelectedCustomer()">Yes</button>
+  </div>
+</ng-template>
+
+
+<ngx-snackbar [position]="'top-right'" [max]="3" [timeout]="5000" [color]="'#fff'"> </ngx-snackbar>
